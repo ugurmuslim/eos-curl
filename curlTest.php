@@ -38,7 +38,7 @@ curl_close($ch);
 
 //// Lokalimizdeki wallet unlock methodu ile açılır. Eğer açılmaz ise sistem hata veriyor..
 
-$payload = [ "ugurtest", "PW5J2XnBnp8GQeYTK5ArDmNwdzMtWBgUd338RYdBLU47gYcQFZ16f" ];
+$payload = [ "ugur****", "****" ];
 $payload = json_encode($payload);
 // Prepare new cURL resource
 $ch = curl_init('http://127.0.0.1:8090/v1/wallet/unlock');
