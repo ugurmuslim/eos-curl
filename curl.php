@@ -42,7 +42,7 @@ $payload = [
         "from"     => "alice",
         "to"       => "bob",
         "quantity" => "1.0000 SYS",
-        "memo"     => "created by ugur",
+        "memo"     => "sina naberfdslnsdlkfjsdlf",
     ],
 ];
 $payload = json_encode($payload);

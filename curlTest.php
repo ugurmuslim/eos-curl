@@ -1,5 +1,7 @@
 <?php
 
+//// Transaction ilk başta hashlenir.
+
 $payload = [
     "code"   => "ugurmuslim21",
     "action" => "transfer",
@@ -34,6 +36,33 @@ curl_close($ch);
 
 ////////////////////////////////////////////////
 
+//// Lokalimizdeki wallet unlock methodu ile açılır. Eğer açılmaz ise sistem hata veriyor..
+
+$payload = [ "ugurtest", "PW5J2XnBnp8GQeYTK5ArDmNwdzMtWBgUd338RYdBLU47gYcQFZ16f" ];
+$payload = json_encode($payload);
+// Prepare new cURL resource
+$ch = curl_init('http://127.0.0.1:8090/v1/wallet/unlock');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+// Set HTTP Header for POST request
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($payload) ]
+);
+
+// Submit the POST request
+$result = curl_exec($ch);
+$result = json_decode($result, true);
+// Close cURL session handle
+curl_close($ch);
+
+
+////////////////////////////////////////////////
+
+//// Wallet ın icinde bulunan public keyler bulunur. Bu wallet ile accountumuz arasındaki parça.
 
 $payload = [
     "code"   => "ugurmuslim21",
@@ -65,10 +94,12 @@ $result = json_decode($result, true);
 $public_keys = $result;
 curl_close($ch);
 var_dump($public_keys);
-////////////////////////////////////////////////////
 
 
-// create curl resource
+////////////////////////////////////////////////
+
+//// Chainde bulunan blok bilgileri alınır.
+
 
 $ch = curl_init();
 
@@ -115,32 +146,15 @@ $blockPrefix = $result['ref_block_prefix'];
 // Close cURL session handle
 curl_close($ch);
 
-/////////////////////////////////////7
 
-    $payload = [ "default", "PW5Kbk6BSMRKq9ZRzc2QWtrtoTFgAfDgwkactPBRiZePaXNriLzkD" ];
-$payload = json_encode($payload);
-// Prepare new cURL resource
-$ch = curl_init('http://jungle2.cryptolions.io:80/v1/wallet/unlock');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+////////////////////////////////////////////////
 
-// Set HTTP Header for POST request
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($payload) ]
-);
+//// Yukarıda alınan bilgiler ile kullanılacak asıl key bulunur.
 
-// Submit the POST request
-$result = curl_exec($ch);
-$result = json_decode($result, true);
-// Close cURL session handle
-curl_close($ch);
-
-
-$date = date("c", strtotime("-2 hours"));
-$date = str_replace('+03:00', '.000', $date);
+$date = date("c",strtotime("+3 minutes"));
+$date = str_replace('+00:00', '.000', $date);
+//$date = date("c", strtotime("-2 hours"));
+//$date = str_replace('+03:00', '.000', $date);
 $payload = [
     "transaction"    => [
         "expiration"             => $date,
@@ -189,6 +203,9 @@ $requiredKey = $result['required_keys'][0];
 // Close cURL session handle
 curl_close($ch);
 
+////////////////////////////////////////////////
+
+//// Yaratılacak transaction yeni bilgiler ile yeniden hashlenir.
 
 $payload =
     [
@@ -239,6 +256,11 @@ $result = json_decode($result, true);
 $signature = $result['signatures'][0];
 // Close cURL session handle
 curl_close($ch);
+
+
+////////////////////////////////////////////////
+
+//// Son olarak hashlenen transaction transfer edilir..
 
 
 $payload = [
@@ -292,7 +314,6 @@ $result = json_decode($result, true);
 curl_close($ch);
 var_dump($result);
 
-//////////////////////////////
 
 
 
